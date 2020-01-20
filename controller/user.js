@@ -9,19 +9,18 @@ router.use(function timeLog (req, res, next) {
 });
 
 router.get('/users', function (req, res) {
-  res.send('User Page');
-});
 
-router.get('/users/:id', function (req, res) {
-	console.log(req.params);
-  res.send('User Detail');
+	User.find({}, function(err, result) {
+		res.send(result);
+	});
+	
 });
 
 router.get('/users/create', function (req, res) {
 	
 	var user = new User({ 
-		first_anme: 'Caesar Ian',
-		last_anme: 'Belza',
+		frist_name: 'Caesar Ian',
+		last_name: 'Belza',
 	});
 
 	user.save(function(err, user) {
@@ -30,6 +29,11 @@ router.get('/users/create', function (req, res) {
 	});
 
 	res.send('User has been created');
+});
+
+router.get('/users/:id', function (req, res) {
+	console.log(req.params);
+  res.send('User Detail');
 });
 
 module.exports = router;
