@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+const { check, validationResult } = require('express-validator');
 const User = require('../model/user');
 
 router.use(function timeLog (req, res, next) {
@@ -16,19 +16,27 @@ router.get('/users', function (req, res) {
 	
 });
 
-router.get('/users/create', function (req, res) {
+router.post('/users', [
+		check('first_name'),
+		check('last_name')
+	],function (req, res) {
 	
+	const errors = validationResult(req);
+	if (!errors.isEmpty()) {
+		return res.status(422).json({ errors: errors.array() });
+	}
+
 	var user = new User({ 
-		frist_name: 'Caesar Ian',
-		last_name: 'Belza',
+		first_name: req.body.first_name,
+		last_name: req.body.last_name
 	});
 
-	user.save(function(err, user) {
+	user.save(function(err, data) {
 		if (err) return console.error(err);
-		console.log(user);
+		res.send(data);
 	});
 
-	res.send('User has been created');
+	
 });
 
 router.get('/users/:id', function (req, res) {
