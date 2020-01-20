@@ -4,6 +4,7 @@ const router = express.Router();
 const mongoose = require('../mongoose/mongoose');
 const home = require('../controller/home');
 const user = require('../controller/user');
+const chat = require('../controller/chat');
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error:'));
@@ -19,5 +20,6 @@ router.use(function timeLog (req, res, next) {
 
 router.use(home);
 router.use(user);
+router.use(chat);
 
 module.exports = router
