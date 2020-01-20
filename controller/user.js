@@ -10,9 +10,13 @@ router.use(function timeLog (req, res, next) {
 
 router.get('/users', function (req, res) {
 
-	User.find({}, function(err, result) {
-		res.send(result);
-	});
+	console.log(appRoot);
+
+	res.render('users/index.html');
+
+	// User.find({}, function(err, result) {
+	// 	res.send(result);
+	// });
 	
 });
 
