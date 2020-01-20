@@ -19,44 +19,46 @@
 		<div class="col-md-8 offset-md-2">
 			
 			<div class="card">
-				<div class="card-body">
-					<div class="col-md-12 mb-1">
-						<div class="media rounded p-2" style="background-color: #eeeeee;">
-						  <!-- <img src="..." class="mr-3" alt="..."> -->
-						  <i class="fa fa-user-circle fa-3x text-gray mr-2"></i>
-						  <div class="media-body">
-						    <h5 class="mt-0 mb-0">Guest <small class="float-right">4s</small></h5>
-						    <small>sample text message</small>
-						  </div>
+				<div class="card-body ">
+
+					<div class="chat-room">
+						<div class="col-md-12 mb-1">
+							<div class="media rounded p-2" style="background-color: #eeeeee;">
+							  <i class="fa fa-user-circle fa-3x text-gray mr-2"></i>
+							  <div class="media-body">
+							    <h5 class="mt-0 mb-0">Guest <small class="float-right">4s</small></h5>
+							    <small>sample text message</small>
+							  </div>
+							</div>
 						</div>
+						<div class="col-md-12 mb-1">
+							<div class="media rounded p-2" style="background-color: #eeeeee;">
+							  <!-- <img src="..." class="mr-3" alt="..."> -->
+							  <i class="fa fa-user-circle fa-3x text-gray mr-2"></i>
+							  <div class="media-body">
+							    <h5 class="mt-0 mb-0">Guest <small class="float-right">4s</small></h5>
+							    <small>sample text message</small>
+							  </div>
+							</div>
+						</div>
+						<div class="col-md-12 mb-1">
+							<div class="media rounded p-2" style="background-color: #eeeeee;">
+							  <!-- <img src="..." class="mr-3" alt="..."> -->
+							  <i class="fa fa-user-circle fa-3x text-gray mr-2"></i>
+							  <div class="media-body">
+							    <h5 class="mt-0 mb-0">Guest <small class="float-right">4s</small></h5>
+							    <small>sample text message</small>
+							  </div>
+							</div>
+						</div>	
 					</div>
-					<div class="col-md-12 mb-1">
-						<div class="media rounded p-2" style="background-color: #eeeeee;">
-						  <!-- <img src="..." class="mr-3" alt="..."> -->
-						  <i class="fa fa-user-circle fa-3x text-gray mr-2"></i>
-						  <div class="media-body">
-						    <h5 class="mt-0 mb-0">Guest <small class="float-right">4s</small></h5>
-						    <small>sample text message</small>
-						  </div>
-						</div>
-					</div>
-					<div class="col-md-12 mb-1">
-						<div class="media rounded p-2" style="background-color: #eeeeee;">
-						  <!-- <img src="..." class="mr-3" alt="..."> -->
-						  <i class="fa fa-user-circle fa-3x text-gray mr-2"></i>
-						  <div class="media-body">
-						    <h5 class="mt-0 mb-0">Guest <small class="float-right">4s</small></h5>
-						    <small>sample text message</small>
-						  </div>
-						</div>
-					</div>		
 
 					<!-- form -->
 
 					<div class="col-md-12">
-						<form class="form rounded p-2" style="background-color: #eeeeee">
+						<form id="message" class="form rounded p-2" style="background-color: #eeeeee">
 						  <div class="form-group m-0">
-						    <input type="text" class="form-control form-control-sm" id="message" placeholder="Enter message..." />
+						    <input type="text" class="form-control form-control-sm message" placeholder="Enter message..." />
 						  </div>
 						  <!-- <button type="submit" class="btn btn-primary btn-sm float-right"><i class="fa fa-paper-plane mr-2"></i>Send</button> -->
 						</form>
@@ -67,6 +69,57 @@
 
 		</div>
 	</div>
+	<script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+	<!-- <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+	<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script> -->
+	<script src="/socket.io/socket.io.js"></script>
+	<script>
 
+		var timeStamp = Math.floor(Date.now() / 1000);
+		var guest = 'guest_' + timeStamp
+		var socket = io.connect('http://127.0.0.1:3000');
+
+		socket.on('connect', function(data) {
+			socket.emit('join', guest);
+		});
+
+		socket.on('broadcast', function(data) {
+
+			$('.chat-room').append(`
+					<div class="col-md-12 mb-1">
+						<div class="media rounded p-2" style="background-color: #eeeeee;">
+						  <i class="fa fa-user-circle fa-3x text-gray mr-2"></i>
+						  <div class="media-body">
+						    <small class="mt-0 mb-0 font-weight-bold">`+data.user.name+`<small class="float-right"></small></h5>
+						    <small>`+data.message+`</small>
+						  </div>
+						</div>
+					</div>
+				`);
+
+        });
+
+		$('#message').submit(function(e){
+		    e.preventDefault();
+		    
+		    socket.emit('message', $('.message').val());
+		    
+		    var message = $('.message').val();
+		    $('.message').val('');
+		    $('.chat-room').append(`
+					<div class="col-md-12 mb-1">
+						<div class="media rounded p-2" style="background-color: #eeeeee;">
+						  <i class="fa fa-user-circle fa-3x text-gray mr-2"></i>
+						  <div class="media-body">
+						    <small class="mt-0 mb-0 font-weight-bold">`+guest+`<small class="float-right"></small></h5>
+						    <small>`+message+`</small>
+						  </div>
+						</div>
+					</div>
+				`);
+
+		});
+
+	</script>
 </body>
 </html>
